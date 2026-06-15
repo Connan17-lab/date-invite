@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Invitation ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        /* Animated Heart Background Styling */
+        body {
+            background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+            overflow-x: hidden;
+        }
+        .heart-particle {
+            position: absolute;
+            color: rgba(244, 63, 94, 0.4);
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: shoot 4s linear infinite;
+        }
+        @keyframes shoot {
+            0% {
+                transform: translate(-10%, 110%) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translate(110vw, -10vh) rotate(360deg) scale(1.5);
+                opacity: 0;
+            }
+        }
+        /* Custom Calendar Styles */
+        .calendar-day:not(.disabled):hover {
+            background-color: #fda4af;
+            color: white;
+        }
+        .calendar-day.selected {
+            background-color: #f43f5e !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative p-4 font-sans">
+
+    <div id="animation-container" class="absolute inset-0 overflow-hidden z-0 pointer-events-none"></div>
+
+    <div class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-rose-200 max-w-md w-full text-center z-10 relative">
+        
+        <div id="step-1" class="step-container space-y-6">
+            <div class="text-rose-500 text-6xl animate-bounce"><i class="fa-solid fa-heart"></i></div>
+            <h1 class="text-3xl font-extrabold text-rose-700">Hey there!</h1>
+            <p class="text-lg text-rose-600 font-medium">Will you do me the absolute honor of going out on a date with me? 🌹</p>
+            <div class="flex gap-4 justify-center pt-4">
+                <button onclick="nextStep(2)" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    Yes! <i class="fa-solid fa-heart-rose ml-1"></i>
+                </button>
+                <button onclick="triggerAlert()" class="bg-stone-300 hover:bg-stone-400 text-stone-700 font-bold py-3 px-8 rounded-full shadow-md transition duration-300">
+                    No
+                </button>
+            </div>
+        </div>
+
+        <div id="step-2" class="step-container hidden space-y-6">
+            <h2 class="text-2xl font-bold text-rose-700">Perfect! What are we doing? ✨</h2>
+            <p class="text-stone-600">Pick your absolute favorite option:</p>
+            <div class="flex flex-col gap-3 pt-2">
+                <button onclick="selectActivity('Playing Mini Golf')" class="activity-btn border-2 border-rose-200 hover:border-rose-400 bg-rose-50/50 p-4 rounded-xl text-left font-semibold text-rose-700 flex items-center gap-4 transition">
+                    <span class="bg-rose-100 p-2 rounded-lg text-rose-500"><i class="fa-solid fa-flag"></i></span> Playing Mini Golf
+                </button>
+                <button onclick="selectActivity('Going to a Movie')" class="activity-btn border-2 border-rose-200 hover:border-rose-400 bg-rose-50/50 p-4 rounded-xl text-left font-semibold text-rose-700 flex items-center gap-4 transition">
+                    <span class="bg-rose-100 p-2 rounded-lg text-rose-500"><i class="fa-solid fa-film"></i></span> Catching a Movie
+                </button>
+                <button onclick="selectActivity('A Cozy Coffee Date')" class="activity-btn border-2 border-rose-200 hover:border-rose-400 bg-rose-50/50 p-4 rounded-xl text-left font-semibold text-rose-700 flex items-center gap-4 transition">
+                    <span class="bg-rose-100 p-2 rounded-lg text-rose-500"><i class="fa-solid fa-mug-hot"></i></span> A Cozy Coffee Date
+                </button>
+            </div>
+        </div>
+
+        <div id="step-3" class="step-container hidden space-y-6">
+            <h2 class="text-2xl font-bold text-rose-700">What's the vibe? 👗👔</h2>
+            <p class="text-stone-600">How should we coordinate our outfits?</p>
+            <div class="flex flex-col gap-4 pt-2">
+                <button onclick="selectOutfit('Matching Clothes')" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-6 rounded-2xl shadow-md transition transform hover:scale-102 flex flex-col items-center gap-1">
+                    <span class="text-xl">✨ Matching Outfits ✨</span>
+                    <span class="text-xs font-normal opacity-90">Let's look cute together!</span>
+                </button>
+                <button onclick="selectOutfit('Comfortable Clothes')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-4 px-6 rounded-2xl shadow-md transition transform hover:scale-102 flex flex-col items-center gap-1">
+                    <span class="text-xl">Wear What's Comfortable</span>
+                    <span class="text-xs font-normal opacity-80 text-rose-600">Casual and completely relaxed</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="step-4" class="step-container hidden space-y-6">
+            <h2 class="text-2xl font-bold text-rose-700">Pick a Date! 📅</h2>
+            <p class="text-stone-600">Select a free day in <strong>July 2026</strong>:</p>
+            
+            <div class="bg-white rounded-2xl p-4 shadow-inner border border-rose-100">
+                <div class="text-rose-600 font-bold mb-2">July 2026</div>
+                <div class="grid grid-cols-7 gap-1 text-xs text-stone-500 font-bold mb-1">
+                    <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-1">
+                    </div>
+            </div>
+
+            <div id="summary-box" class="hidden text-left bg-rose-50 p-4 rounded-xl border border-rose-200 text-sm space-y-1">
+                <p class="text-rose-800 font-bold text-center border-b border-rose-200 pb-1 mb-1">Your Selection Summary</p>
+                <p class="text-stone-700"><strong>Plan:</strong> <span id="summary-activity"></span></p>
+                <p class="text-stone-700"><strong>Style:</strong> <span id="summary-outfit"></span></p>
+                <p class="text-stone-700"><strong>Date:</strong> <span id="summary-date"></span></p>
+            </div>
+
+            <button id="confirm-btn" onclick="sendInviteResponse()" disabled class="w-full bg-stone-300 text-stone-500 font-bold py-3 rounded-full shadow-lg transition duration-300 cursor-not-allowed">
+                Lock It In! 🔒
+            </button>
+        </div>
+
+        <div id="step-5" class="step-container hidden space-y-6 animate-fade-in">
+            <div class="text-rose-500 text-6xl"><i class="fa-solid fa-heart-circle-check"></i></div>
+            <h2 class="text-3xl font-extrabold text-rose-700">It's a Date! 🎉</h2>
+            <p class="text-lg text-rose-600 font-medium">The plans have been locked in, and a notification has been beamed directly to my email.</p>
+            <p class="text-sm text-stone-500">Can't wait to see you! ❤️</p>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        // Initialize EmailJS with your Public Key
+        (function() {
+            emailjs.init("1clUvqkbkL_tFSYHT"); 
+        })();
+
+        // State Tracking for Selections
+        const selections = {
+            activity: "",
+            outfit: "",
+            date: ""
+        };
+
+        // --- 2. ANIMATED BACKGROUND (Shooting Heart Arrows) ---
+        function createHeartParticle() {
+            const container = document.getElementById('animation-container');
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            
+            // Randomly use arrow hearts or regular hearts
+            heart.innerHTML = Math.random() > 0.5 ? '<i class="fa-solid fa-heart-arrow"></i>' : '<i class="fa-solid fa-heart"></i>';
+            
+            // Randomize spatial positioning variables
+            heart.style.top = Math.random() * 100 + 'vh';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's'; // Between 3s and 6s
+            
+            container.appendChild(heart);
+            
+            // Dynamic cleaning
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+        // Keep generating background hearts
+        setInterval(createHeartParticle, 400);
+
+        // --- 3. STEP NAVIGATION LOGIC ---
+        function nextStep(stepNumber) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`step-${stepNumber}`).classList.remove('hidden');
+            
+            if(stepNumber === 4) {
+                renderJuly2026Calendar();
+            }
+        }
+
+        function triggerAlert() {
+            alert("❌ This button is not optional. You have to say yes! 😉");
+        }
+
+        function selectActivity(activityName) {
+            selections.activity = activityName;
+            nextStep(3);
+        }
+
+        function selectOutfit(outfitChoice) {
+            selections.outfit = outfitChoice;
+            nextStep(4);
+        }
+
+        // --- 4. CALENDAR BUILDER (July 2026 Specific) ---
+        function renderJuly2026Calendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = ''; // Clear prior elements if any
+
+            // July 1st, 2026 lands on a Wednesday -> 3 blank slots required at start
+            const startingPaddingDays = 3; 
+            const totalDaysInMonth = 31;
+
+            // Generate structural spaces
+            for (let i = 0; i < startingPaddingDays; i++) {
+                const blank = document.createElement('div');
+                grid.appendChild(blank);
+            }
+
+            // Generate Day Buttons
+            for (let day = 1; day <= totalDaysInMonth; day++) {
+                const dayCell = document.createElement('button');
+                dayCell.innerText = day;
+                dayCell.className = "calendar-day p-2 text-sm text-stone-700 font-semibold rounded-lg transition duration-200 focus:outline-none flex items-center justify-center h-8 w-8 mx-auto";
+                
+                dayCell.onclick = function() {
+                    // Reset styling on elements
+                    document.querySelectorAll('.calendar-day').forEach(c => c.classList.remove('selected'));
+                    // Set Selection
+                    dayCell.classList.add('selected');
+                    selections.date = `${day} July 2026`;
+                    
+                    // Display details and update confirm button layout
+                    updateSummaryUI();
+                };
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function updateSummaryUI() {
+            document.getElementById('summary-activity').innerText = selections.activity;
+            document.getElementById('summary-outfit').innerText = selections.outfit;
+            document.getElementById('summary-date').innerText = selections.date;
+            document.getElementById('summary-box').classList.remove('hidden');
+
+            // Unshackle the action button
+            const confirmBtn = document.getElementById('confirm-btn');
+            confirmBtn.disabled = false;
+            confirmBtn.className = "w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-full shadow-lg transition duration-300 transform hover:scale-102 cursor-pointer";
+        }
+
+        // --- 5. EMAILJS INTEGRATION ---
+        function sendInviteResponse() {
+            const confirmBtn = document.getElementById('confirm-btn');
+            confirmBtn.innerText = "Sending Response... 💌";
+            confirmBtn.disabled = true;
+
+            // Map data to template variables
+            const templateParams = {
+                to_email: 'cniaken@gmail.com',
+                date_type: selections.activity,  // Inserts 'Playing Mini Golf', 'Going to a Movie', or 'A Cozy Coffee Date'
+                outfit: selections.outfit,       // Inserts 'Matching Clothes' or 'Comfortable Clothes'
+                chosen_date: selections.date
+            };
+
+            // Transmit through API
+            emailjs.send('service_w7muc1l', 'template_2usairo', templateParams)
+                .then(function(response) {
+                   console.log('SUCCESS!', response.status, response.text);
+                   nextStep(5);
+                }, function(error) {
+                   console.log('FAILED...', error);
+                   alert("Oh no! Something went wrong while saving your choice. Please try hitting confirm again.");
+                   confirmBtn.innerText = "Lock It In! 🔒";
+                   confirmBtn.disabled = false;
+                });
+        }
+    </script>
+</body>
+</html>
